@@ -2,39 +2,66 @@
 
 import sys
 
-class Node():
-    def __init__(self, val=None, child_val=None, parent=None, children=None):
-        self.val = val
-        self.child_val = child_val
-        self.parent = parent
-        self.children = [] if not children else children
+class Node(object):
 
-    def add_child(self, node):
-        if not isinstance(node, Node):
-            raise ValueError("Cannot append node of type: [%s]" % type(node))
-        else:
-            self.children.append(node)
+    def __init__(self,id, weight):
+      self.children = []
+      self.id = id
+      self.weight = weight
 
-def is_terminal(e):
-    return len(e) == 2 and type(e[0]) == int and type(e[1]) == int
+    def getChildren(self):
+        return self.children
+    def setNodeValue(self,value):
+        self.id = value
+    def getNodeValue(self):
+        return self.id
+    def setNodeWeight(self,weight):
+        self.weight = weight
+    def getNodeWeight(self):
+        return self.weight
 
-def from_list(lst, weights, root):
-    lst = list(lst)
-    if not lst:
-        return
-    for e in lst:
-        if is_terminal(e):
-            val, child_val, parent, children = weights[e[0]-1], weights[e[1]-1], e[0], e[1]
-            print("terminal", val, "with root", root.val)
-            root.add_child(Node(val=val,child_val=child_val, children=children, parent=parent))
-        # else:
-        #     e = list(e)
-        #     val, parent, children = weights, e.pop(0), e
-        #     print("non terminal", val, "with root", root.val)
-        #     newroot = Node(val=val, parent=root)
-        #     root.add_child(newroot)
-        #     from_list(e, val, root=newroot)
+    def insertChild(self,edge, weight):
+        inserted = False
+        if self.id == edge[0]:
+            self.children.append(Node(edge[1], weight[1]))
+            inserted = True
+        elif self.id == edge[1]:
+            self.children.append(Node(edge[0], weight[0]))
+            inserted = True
+        elif self.children is not []:
+            for children in self.children:
+                if children.children is not [] :
+                    inserted = children.insertChild(edge, weight)
+                else:
+                    if children.id == edge[0]:
+                        children.append(Node(edge[1], weight[1]))
+                        inserted = True
+                    elif children.id == edge[1]:
+                        children.append(Node(edge[0], weight[0]))
+                        inserted = True
+        return inserted
 
+def printTree(tree):
+        if isinstance(tree, Node):
+            print(tree.getNodeValue(),tree.getNodeWeight())
+            printTree(tree.getChildren())
+        if type(tree) is list and tree != []:
+                for children in tree:
+                    if isinstance(children, Node):
+                        print(children.getNodeValue(),children.getNodeWeight())
+                        printTree(children.getChildren())
+            
+
+# test tree
+
+def testTree(edges,weights):
+    root = Node(edges[0][0],weights[edges[0][0]-1])
+    for edge in edges:
+        status = root.insertChild(edge,[weights[edge[0]-1],weights[edge[1]-1]])
+        if not status:
+            print(edge," Not inserted")
+    printTree(root)
+    
 if __name__ == "__main__":
     n, k = input().strip().split(' ')
     n, k = [int(n), int(k)]
@@ -44,6 +71,4 @@ if __name__ == "__main__":
        arr_t = [int(arr_temp) for arr_temp in input().strip().split(' ')]
        edges.append(arr_t)
     print(edges, weights)
-    e = edges[0]
-    root = Node(val=weights[e[0]], child_val=weights[e[1]], parent=e[0], children=e[1])
-    from_list(edges, weights, root=root)
+    testTree(edges, weights)
