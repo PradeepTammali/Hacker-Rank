@@ -41,11 +41,32 @@ class Node(object):
                         inserted = True
         return inserted
 
+    def attachRoots(self,roots):
+        if roots is list:
+            for root_children in roots:
+                if root_children.children is not []:
+                    for root in root_children.children:
+                        if self.id == root.id:
+                            self.children.append(root)
+                        elif self.children is not []:
+                            for children in self.children:
+                                children.attachRoots(root)
+        elif isinstance(roots, Node):
+            if roots.children is not []:            
+                for root in roots.children:
+                    if self.id == root.id:
+                        self.children.append(root)
+                        break
+                    elif self.children is not []:
+                        for children in self.children:
+                            children.attachRoots(root)
+        return self
+
 def printTree(tree):
         if isinstance(tree, Node):
             print(tree.getNodeValue(),tree.getNodeWeight())
             printTree(tree.getChildren())
-        if type(tree) is list and tree != []:
+        elif type(tree) is list and tree != []:
                 for children in tree:
                     if isinstance(children, Node):
                         print(children.getNodeValue(),children.getNodeWeight())
@@ -55,13 +76,29 @@ def printTree(tree):
 # test tree
 
 def testTree(edges,weights):
-    root = Node(edges[0][0],weights[edges[0][0]-1])
+    roots = []
+    intial_root = Node(edges[0][0],weights[edges[0][0]-1])
+    roots.append(intial_root)
     for edge in edges:
-        status = root.insertChild(edge,[weights[edge[0]-1],weights[edge[1]-1]])
-        if not status:
-            print(edge," Not inserted")
-    printTree(root)
-    
+        status_count = 0
+        for root in roots:
+            status = root.insertChild(edge,[weights[edge[0]-1],weights[edge[1]-1]])
+            if status:
+                print(edge," inserted")
+                break
+            if not status:
+                print(edge," Not inserted")
+                status_count += 1
+            if status_count == len(roots):
+                print(edge,'storing as root node')
+                roots.append(Node(edge[0],weights[edge[0]-1]))
+    for root in roots:
+        print("printing")
+        printTree(root)
+    root = roots[0]
+    tree = root.attachRoots(roots[1:])
+    printTree(tree)
+
 if __name__ == "__main__":
     n, k = input().strip().split(' ')
     n, k = [int(n), int(k)]
