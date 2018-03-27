@@ -75,10 +75,7 @@ def printTree(tree):
                 for children in tree:
                     if isinstance(children, Node):
                         print(children.getNodeValue(),children.getNodeWeight())
-                        printTree(children.getChildren())
-            
-
-# test tree
+                        printTree(children.getChildren())            
 
 def testTree(edges,weights):
     roots = []
@@ -101,7 +98,7 @@ def testTree(edges,weights):
         print("printing")
         printTree(root)
     root = roots[0]
-    tree = root.attachRoots(roots[1])
+    tree = root.attachRoots(roots[1:])
     print("printing final root")
     printTree(tree)
 
