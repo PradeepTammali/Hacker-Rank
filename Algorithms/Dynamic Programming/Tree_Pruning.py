@@ -42,24 +42,29 @@ class Node(object):
         return inserted
 
     def attachRoots(self,roots):
-        if roots is list:
+        if isinstance(roots, list):
             for root_children in roots:
-                if root_children.children is not []:
-                    for root in root_children.children:
-                        if self.id == root.id:
-                            self.children.append(root)
-                        elif self.children is not []:
-                            for children in self.children:
-                                children.attachRoots(root)
+                if self.children is not []:
+                    for root in self.children:
+                        if root.id == root_children.id:
+                            if root_children.children is not []:
+                                for child in root_children.children:
+                                    root.children.append(child)
+                            break
+                        elif root.children is not []:
+                            for children in root.children:
+                                children.attachRoots(root_children)
         elif isinstance(roots, Node):
-            if roots.children is not []:            
-                for root in roots.children:
-                    if self.id == root.id:
-                        self.children.append(root)
+            if self.children is not []:
+                for root in self.children:
+                    if roots.id == root.id:
+                        if roots.children != []:
+                                for child in roots.children:
+                                    root.children.append(child)
                         break
-                    elif self.children is not []:
-                        for children in self.children:
-                            children.attachRoots(root)
+                    elif root.children is not []:
+                        for children in root.children:
+                            children.attachRoots(roots)
         return self
 
 def printTree(tree):
@@ -96,7 +101,8 @@ def testTree(edges,weights):
         print("printing")
         printTree(root)
     root = roots[0]
-    tree = root.attachRoots(roots[1:])
+    tree = root.attachRoots(roots[1])
+    print("printing final root")
     printTree(tree)
 
 if __name__ == "__main__":
