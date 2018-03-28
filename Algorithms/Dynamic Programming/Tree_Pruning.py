@@ -4,7 +4,7 @@ import sys
 
 class Node(object):
 
-    def __init__(self,id, weight):
+    def __init__(self, id, weight):
       self.children = []
       self.id = id
       self.weight = weight
@@ -15,12 +15,12 @@ class Node(object):
         self.id = value
     def getNodeValue(self):
         return self.id
-    def setNodeWeight(self,weight):
+    def setNodeWeight(self, weight):
         self.weight = weight
     def getNodeWeight(self):
         return self.weight
 
-    def insertChild(self,edge, weight):
+    def insertChild(self, edge, weight):
         inserted = False
         if self.id == edge[0]:
             self.children.append(Node(edge[1], weight[1]))
@@ -41,7 +41,7 @@ class Node(object):
                         inserted = True
         return inserted
 
-    def attachRoots(self,roots):
+    def attachRoots(self, roots):
         if isinstance(roots, list):
             for root_children in roots:
                 if self.children is not []:
@@ -67,24 +67,49 @@ class Node(object):
                             children.attachRoots(roots)
         return self
 
+    def checkChildNodes(self, del_nodes, res):
+        if (res + self.weight ) <= res:
+            del_nodes.append(self.id)
+        if self.children != []:
+            for child in self.children:
+                if (res + child.weight) <= res:
+                    child.checkChildNodes(del_nodes, res)
+        return del_nodes
+
+    def findMaxSum(self, del_nodes):
+        res = 0
+        del_res = []
+        # Compute and return result
+        if isinstance(self, Node):
+            if (self.weight + res) >= res:
+                res +=  self.weight
+                if self.children != []:
+                    for child in self.children:
+                        res += child.findMaxSum(del_nodes)
+            else:
+                del_res = self.checkChildNodes(del_res, res)
+                print(del_res)
+                del_nodes.append(del_res)
+        return res
+
 def printTree(tree):
         if isinstance(tree, Node):
-            print(tree.getNodeValue(),tree.getNodeWeight())
+            print(tree.getNodeValue(), tree.getNodeWeight())
             printTree(tree.getChildren())
         elif type(tree) is list and tree != []:
                 for children in tree:
                     if isinstance(children, Node):
-                        print(children.getNodeValue(),children.getNodeWeight())
+                        print(children.getNodeValue(), children.getNodeWeight())
                         printTree(children.getChildren())            
 
-def testTree(edges,weights):
+def testTree(edges, weights, k):
     roots = []
-    intial_root = Node(edges[0][0],weights[edges[0][0]-1])
+    intial_root = Node(edges[0][0], weights[edges[0][0]-1])
     roots.append(intial_root)
     for edge in edges:
         status_count = 0
         for root in roots:
-            status = root.insertChild(edge,[weights[edge[0]-1],weights[edge[1]-1]])
+            status = root.insertChild(edge, [weights[edge[0]-1], weights[edge[1]-1]])
             if status:
                 print(edge," inserted")
                 break
@@ -93,7 +118,7 @@ def testTree(edges,weights):
                 status_count += 1
             if status_count == len(roots):
                 print(edge,'storing as root node')
-                roots.append(Node(edge[0],weights[edge[0]-1]))
+                roots.append(Node(edge[0], weights[edge[0]-1]))
     for root in roots:
         print("printing")
         printTree(root)
@@ -101,6 +126,9 @@ def testTree(edges,weights):
     tree = root.attachRoots(roots[1:])
     print("printing final root")
     printTree(tree)
+    del_nodes = []
+    print("sum-----",tree.findMaxSum(del_nodes))
+    print("del nodes----", del_nodes)
 
 if __name__ == "__main__":
     n, k = input().strip().split(' ')
@@ -111,4 +139,4 @@ if __name__ == "__main__":
        arr_t = [int(arr_temp) for arr_temp in input().strip().split(' ')]
        edges.append(arr_t)
     print(edges, weights)
-    testTree(edges, weights)
+    testTree(edges, weights, k)
