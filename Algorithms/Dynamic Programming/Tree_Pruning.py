@@ -1,6 +1,7 @@
 #!/bin/python
 
 import sys
+import operator
 
 class Node(object):
 
@@ -76,6 +77,16 @@ class Node(object):
                     child.checkChildNodes(del_nodes, res)
         return del_nodes
 
+    def checkNode(self, id, weight):
+        if isinstance(self, Node):
+            if self.getNodeValue() == id:
+                weight += self.getNodeWeight()
+            else:
+                for child in self.children:
+                    if isinstance(child, Node):
+                        weight = child.checkNode(id, weight)
+        return weight
+
     def findMaxSum(self, del_nodes):
         res = 0
         del_res = []
@@ -88,19 +99,18 @@ class Node(object):
                         res += child.findMaxSum(del_nodes)
             else:
                 del_res = self.checkChildNodes(del_res, res)
-                print(del_res)
                 del_nodes.append(del_res)
         return res
 
 def printTree(tree):
         if isinstance(tree, Node):
             print(tree.getNodeValue(), tree.getNodeWeight())
-            printTree(tree.getChildren())
+            printTree(tree.children)
         elif type(tree) is list and tree != []:
                 for children in tree:
                     if isinstance(children, Node):
                         print(children.getNodeValue(), children.getNodeWeight())
-                        printTree(children.getChildren())            
+                        printTree(children.children)
 
 def testTree(edges, weights, k):
     roots = []
@@ -129,6 +139,19 @@ def testTree(edges, weights, k):
     del_nodes = []
     print("sum-----",tree.findMaxSum(del_nodes))
     print("del nodes----", del_nodes)
+    final_del_nodes = {}
+    for del_node in del_nodes:
+        w = 0
+        for i in range(len(del_node)):
+            w = tree.checkNode(del_node[i], w)
+        final_del_nodes[repr(del_node)] = w
+    sorted_final_del_nodes = sorted(final_del_nodes.items(), key=operator.itemgetter(1))
+    for i in range(k):
+        l = list(sorted_final_del_nodes[i][0].strip())
+        print(l)
+        
+                
+
 
 if __name__ == "__main__":
     n, k = input().strip().split(' ')
