@@ -144,14 +144,12 @@ def testTree(edges, weights, k):
         w = 0
         for i in range(len(del_node)):
             w = tree.checkNode(del_node[i], w)
-        final_del_nodes[repr(del_node)] = w
+        # final_del_nodes[repr(del_node)] = w
+        final_del_nodes[w] = del_node
     sorted_final_del_nodes = sorted(final_del_nodes.items(), key=operator.itemgetter(1))
     for i in range(k):
         l = list(sorted_final_del_nodes[i][0].strip())
         print(l)
-        
-                
-
 
 if __name__ == "__main__":
     n, k = input().strip().split(' ')
