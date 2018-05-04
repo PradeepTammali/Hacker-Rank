@@ -8,8 +8,7 @@ def maximumProfit(profits):
     profit = -1
     new_profit = -1
     for i in range(len(profits)):
-        if i != len(profits)-1:   
-            print(i)          
+        if i != len(profits)-1:         
             if profits[i] < max(profits[i+1:]):
                 p = profits[i]
                 if len(heapq.nlargest(2, profits[i+1:])) == 2:
@@ -22,12 +21,12 @@ def maximumProfit(profits):
                         # break
     return profit
 
-
 if __name__ == '__main__':
-    fptr = open(os.environ['PWD']+'/output.txt', 'w')
-    # fptr = open(os.environ['OUTPUT_PATH'], 'w')
+    # fptr = open(os.environ['PWD']+'/output.txt', 'w')
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
     n = int(input())
-    p = list(map(int, input().rstrip().split(   )))
+    inp = input()
+    p = list(map(int, inp.rstrip().split()))
     result = maximumProfit(p)
     fptr.write(str(result) + '\n')
     fptr.close()
