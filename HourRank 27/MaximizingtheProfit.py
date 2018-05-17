@@ -3,7 +3,7 @@
 import os
 import sys
 
-def maximumProfit(profits, n):
+def maximumProfitDemo(profits, n):
     profit = -10000000
     count = 0
     profits.reverse()
@@ -33,6 +33,22 @@ def maximumProfit(profits, n):
                                 count = -1
                                 profit = new_profit
         # min_index += 1
+    if count == 0:
+        return -1
+    else:
+        return profit
+
+def maximumProfit(profits, n):
+    profit = -10000000
+    count = 0
+    for i in range(n):
+        for j in range(i, n):
+            for k in range(j, n):
+                if profits[i] < profits[j] < profits[k]:
+                    new_profit = profits[i]*profits[j]*profits[k]
+                    if new_profit > profit:
+                        count = -1
+                        profit = new_profit
     if count == 0:
         return -1
     else:
