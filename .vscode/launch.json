@@ -5,6 +5,45 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "CodeLens (Launch) - JumpingontheClouds",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "JumpingontheClouds",
+            "args": "",
+            "env": {
+                "OUTPUT_PATH": "${workspaceFolder}/JumpingontheClouds.txt"
+            }
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - CountingValleys",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "CountingValleys",
+            "args": "",
+            "env": {
+                "OUTPUT_PATH": "${workspaceFolder}/CountingValleys.txt"
+            }
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - SockMerchant",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "SockMerchant",
+            "args": "",
+            "env": {
+                "OUTPUT_PATH": "${workspaceFolder}/SockMerchant.txt"
+            }
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
