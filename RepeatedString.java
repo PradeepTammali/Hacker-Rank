@@ -8,22 +8,28 @@ import java.util.regex.*;
 
 public class RepeatedString {
 
+    static int getCount(String string) {
+        int count = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == 'a') {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // Complete the repeatedString function below.
     static long repeatedString(String s, long n) {
         long occurance = 0l;
         int aCount = 0;
-        char[] chars = s.toCharArray();
-        Arrays.sort(chars);
-        String sorted = new String(chars);
-        for (int i = 0; i < sorted.length(); i++) {
-            if (sorted.charAt(i) != 'a') {
-                break;
-            }
-            aCount++;
-        }
-        System.out.println("String:" + s);
         if (s.length() < n) {
-            System.out.println( n/s.length() * aCount + ",reminder"+ n%s.length());
+            aCount = getCount(s);
+            occurance = (n / s.length()) * aCount;
+            s = s.substring(0, (int) (n % s.length()));
+            occurance += getCount(s);
+        } else {
+            s = s.substring(0, (int) n);
+            occurance = getCount(s);
         }
         return occurance;
     }

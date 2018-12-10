@@ -14,7 +14,7 @@
             "mainClass": "RepeatedString",
             "args": "",
             "env": {
-                "OUTPUT_PATH": "${workspaceFolder}/JumpingontheClouds.txt"
+                "OUTPUT_PATH": "${workspaceFolder}/RepeatedString.txt"
             }
         },
         {
