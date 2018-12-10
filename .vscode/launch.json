@@ -6,6 +6,19 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - RepeatedString",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "RepeatedString",
+            "args": "",
+            "env": {
+                "OUTPUT_PATH": "${workspaceFolder}/JumpingontheClouds.txt"
+            }
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - JumpingontheClouds",
             "request": "launch",
             "cwd": "${workspaceFolder}",
