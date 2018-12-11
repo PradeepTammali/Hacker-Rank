@@ -3,47 +3,93 @@
 import os
 import sys
 
+student_grades = {}
+groups = {}         # { 0 : [A, B], 1 : [C, D, E]}
+student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
+
+# helper function to check the limits for each grade
+
+
+def checkGradesLimit(students_list):
+    firstGrade = secondGrade = thirdGrade = 0
+    for student in students_list:
+        if student_grades[student] == 1:
+            firstGrade = firstGrade + 1
+        elif student_grades[student] == 2:
+            secondGrade = secondGrade + 1
+        elif student_grades[student] == 3:
+            thirdGrade = thirdGrade + 1
+    return firstGrade <= f and secondGrade <= s and thirdGrade <= t
+
+
 # Complete the membersInTheLargestGroups function below.
 
-
+# n = number of test cases
+# m = number of requests
+# a = min for group
+# b = max for group
+# f = first grade max
+# s = second grade max
+# t = third grade max
 def membersInTheLargestGroups(n, m, a, b, f, s, t):
-    students = {}
-    requests = {}
-    groups = {}
     i = 0
     while i < n:
         name, grade = input().rstrip().split(' ')
-        students[name] = int(grade)
+        student_grades[name] = int(grade)
         i += 1
-    i = 0
     for i in range(0, m):
-        requests[i] = list(input().rstrip().split(' '))
-
-    for i in range(0, m):
-        studentOne, studentTwo = requests[i][0], requests[i][1]
-        for j in range(0, len(groups)):
-            addStudent = False
-            if studentOne in groups[j] and len(groups[j])+1 <= b:
-                for k in range(0, len(groups)):
-                    if k != j and studentTwo not in groups[k]:
-                        addStudent = True
-                        break
-            if addStudent:
-                groups[j].update(requests[i])
-                break
+        studentOne, studentTwo = input().rstrip().split(' ')
+        studentOneFlag = False
+        studentTwoFlag = False
+        if studentOne in student_group:
+            studentOneFlag = True
+        if studentTwo in student_group:
+            studentTwoFlag = True
+        if studentOneFlag and studentTwoFlag:
+            if student_group[studentOne] != student_group[studentTwo] and len(groups[student_group[studentOne]]) + len(groups[student_group[studentTwo]]) <= b:
+                # check if max limit reached for studentOne and studentTwo's groups
+                if checkGradesLimit(groups[student_group[studentTwo]] | groups[student_group[studentOne]]):
+                    # concat higher group with lower group and discard higher group
+                    mergeGroups = (student_group[studentTwo], student_group[studentOne]) if student_group[studentOne] > student_group[studentTwo] else (
+                        student_group[studentOne], student_group[studentTwo])
+                    for i in groups[mergeGroups[1]]:
+                        student_group[i] = mergeGroups[0]
+                    groups[mergeGroups[0]] = groups[mergeGroups[0]
+                                                    ] | groups[mergeGroups[1]]
+                    for i in range(mergeGroups[1], len(groups)-1):
+                        groups[i] = groups[i+1]
+                        for student in groups[i+1]:
+                            student_group[student] = i
+                    groups.pop(len(groups)-1)
+        elif studentOneFlag:
+            if len(groups[student_group[studentOne]]) < b and checkGradesLimit(groups[student_group[studentOne]] | {studentTwo}):
+                #  add studentTwo to studentOne's group
+                student_group[studentTwo] = student_group[studentOne]
+                groups[student_group[studentOne]].add(studentTwo)
+                # check for the student grades in each group
+        elif studentTwoFlag:
+            if len(groups[student_group[studentTwo]]) < b and checkGradesLimit(groups[student_group[studentTwo]] | {studentOne}):
+                #  add studentOne to studentTwo's group
+                student_group[studentOne] = student_group[studentTwo]
+                groups[student_group[studentTwo]].add(studentOne)
         else:
-            groups[len(groups)] = set(requests[i])
-                
-            
-    # for i in range(0, m):
-    #     for j in range(0, len(groups)):
-    #         if j > 0 and any(elem in groups[j-1] for elem in groups[j]):
-    #             print(set([groups[j-1],groups[j]]))
-    #         if any(elem in requests[i] for elem in groups[j]) and len(groups[j]) < b:
-    #             groups[j].update(requests[i])
-    #             break
-    #     else:
-    #         groups[len(groups)] = set(requests[i])
+            # add both the students to a new group
+            student_group[studentOne] = len(groups)
+            student_group[studentTwo] = len(groups)
+            groups[len(groups)] = {studentOne, studentTwo}
+
+    max_len = 0
+    for group in groups:
+        if len(groups[group]) > max_len:
+            max_len = len(groups[group])
+    if max_len >= a:
+        output = [item for sublist in filter(lambda g: len(
+            g) == max_len, groups.values()) for item in sublist]
+        output.sort()
+        for student in output:
+            print(student)
+    else:
+        print("no groups")
     return
 
 
