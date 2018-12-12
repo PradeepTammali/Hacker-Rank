@@ -4,8 +4,6 @@ import os
 import sys
 
 student_grades = {}
-groups = {}         # { 0 : [A, B], 1 : [C, D, E]}
-student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
 
 # helper function to check the limits for each grade
 
@@ -32,13 +30,18 @@ def checkGradesLimit(students_list):
 # s = second grade max
 # t = third grade max
 def membersInTheLargestGroups(n, m, a, b, f, s, t):
+    groups = {}         # { 0 : [A, B], 1 : [C, D, E]}
+    student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
+    requests = {}
     i = 0
     while i < n:
         name, grade = input().rstrip().split(' ')
         student_grades[name] = int(grade)
         i += 1
     for i in range(0, m):
-        studentOne, studentTwo = input().rstrip().split(' ')
+        requests[i] = input().rstrip().split(' ')
+    for i in range(0, m):
+        studentOne, studentTwo = requests[i]
         studentOneFlag = False
         studentTwoFlag = False
         if studentOne in student_group:
