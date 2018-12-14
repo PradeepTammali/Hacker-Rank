@@ -4,6 +4,7 @@ import os
 import sys
 
 student_grades = {}
+student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
 
 # helper function to check the limits for each grade
 
@@ -20,6 +21,10 @@ def checkGradesLimit(students_list):
     return firstGrade <= f and secondGrade <= s and thirdGrade <= t
 
 
+def getKeysByValue(value):
+    return [k for (k, v) in student_group.items() if v == value]
+
+
 # Complete the membersInTheLargestGroups function below.
 
 # n = number of test cases
@@ -30,8 +35,7 @@ def checkGradesLimit(students_list):
 # s = second grade max
 # t = third grade max
 def membersInTheLargestGroups(n, m, a, b, f, s, t):
-    groups = {}         # { 0 : [A, B], 1 : [C, D, E]}
-    student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
+    groups_count = 0
     requests = {}
     i = 0
     while i < n:
@@ -49,45 +53,47 @@ def membersInTheLargestGroups(n, m, a, b, f, s, t):
         if studentTwo in student_group:
             studentTwoFlag = True
         if studentOneFlag and studentTwoFlag:
-            if student_group[studentOne] != student_group[studentTwo] and len(groups[student_group[studentOne]]) + len(groups[student_group[studentTwo]]) <= b:
+            studentOneKeys = getKeysByValue(student_group[studentOne])
+            studentTwoKeys = getKeysByValue(student_group[studentTwo])
+            if student_group[studentOne] != student_group[studentTwo] and len(studentOneKeys) + len(studentTwoKeys) <= b:
                 # check if max limit reached for studentOne and studentTwo's groups
-                if checkGradesLimit(groups[student_group[studentTwo]] | groups[student_group[studentOne]]):
+                if checkGradesLimit(studentOneKeys + studentTwoKeys):
                     # concat higher group with lower group and discard higher group
                     mergeGroups = (student_group[studentTwo], student_group[studentOne]) if student_group[studentOne] > student_group[studentTwo] else (
                         student_group[studentOne], student_group[studentTwo])
-                    for i in groups[mergeGroups[1]]:
-                        student_group[i] = mergeGroups[0]
-                    groups[mergeGroups[0]] = groups[mergeGroups[0]
-                                                    ] | groups[mergeGroups[1]]
-                    for i in range(mergeGroups[1], len(groups)-1):
-                        groups[i] = groups[i+1]
-                        for student in groups[i+1]:
-                            student_group[student] = i
-                    groups.pop(len(groups)-1)
+                    student_group.update(dict.fromkeys(
+                        getKeysByValue(mergeGroups[1]), mergeGroups[0]))
+                    for i in range(mergeGroups[1]+1, groups_count):
+                        student_group.update(
+                            dict.fromkeys(getKeysByValue(i), i-1))
+                    groups_count -= 1
         elif studentOneFlag:
-            if len(groups[student_group[studentOne]]) < b and checkGradesLimit(groups[student_group[studentOne]] | {studentTwo}):
+            studentOneKeys = getKeysByValue(student_group[studentOne])
+            if len(studentOneKeys) < b and checkGradesLimit(studentOneKeys + [studentTwo]):
                 #  add studentTwo to studentOne's group
                 student_group[studentTwo] = student_group[studentOne]
-                groups[student_group[studentOne]].add(studentTwo)
-                # check for the student grades in each group
         elif studentTwoFlag:
-            if len(groups[student_group[studentTwo]]) < b and checkGradesLimit(groups[student_group[studentTwo]] | {studentOne}):
+            studentTwoKeys = getKeysByValue(student_group[studentTwo])
+            if len(studentTwoKeys) < b and checkGradesLimit(studentTwoKeys + [studentOne]):
                 #  add studentOne to studentTwo's group
                 student_group[studentOne] = student_group[studentTwo]
-                groups[student_group[studentTwo]].add(studentOne)
         else:
             # add both the students to a new group
-            student_group[studentOne] = len(groups)
-            student_group[studentTwo] = len(groups)
-            groups[len(groups)] = {studentOne, studentTwo}
+            student_group[studentOne] = groups_count
+            student_group[studentTwo] = groups_count
+            groups_count += 1
 
     max_len = 0
-    for group in groups:
-        if len(groups[group]) > max_len:
-            max_len = len(groups[group])
+    output = []
+    for group in range(0, groups_count):
+        groupKeys = getKeysByValue(group)
+        max_value = len(groupKeys)
+        if max_value == max_len:
+            output += groupKeys
+        if max_value > max_len:
+            max_len = max_value
+            output = groupKeys
     if max_len >= a:
-        output = [item for sublist in filter(lambda g: len(
-            g) == max_len, groups.values()) for item in sublist]
         output.sort()
         for student in output:
             print(student)
