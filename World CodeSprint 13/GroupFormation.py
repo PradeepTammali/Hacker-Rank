@@ -32,16 +32,13 @@ def checkGradesLimit(students_list):
 def membersInTheLargestGroups(n, m, a, b, f, s, t):
     groups = {}         # { 0 : [A, B], 1 : [C, D, E]}
     student_group = {}  # { A : 0, B : 0, C : 1, D : 1, E : 1}
-    requests = {}
     i = 0
     while i < n:
         name, grade = input().rstrip().split(' ')
         student_grades[name] = int(grade)
         i += 1
     for i in range(0, m):
-        requests[i] = input().rstrip().split(' ')
-    for i in range(0, m):
-        studentOne, studentTwo = requests[i]
+        studentOne, studentTwo = input().rstrip().split(' ')
         studentOneFlag = False
         studentTwoFlag = False
         if studentOne in student_group:
@@ -82,12 +79,16 @@ def membersInTheLargestGroups(n, m, a, b, f, s, t):
             groups[len(groups)] = {studentOne, studentTwo}
 
     max_len = 0
+    output = list()
     for group in groups:
-        if len(groups[group]) > max_len:
-            max_len = len(groups[group])
+        groupKeys = list(groups[group])
+        max_value = len(groupKeys)
+        if max_value == max_len:
+            output += groupKeys
+        if max_value > max_len:
+            max_len = max_value
+            output = groupKeys
     if max_len >= a:
-        output = [item for sublist in filter(lambda g: len(
-            g) == max_len, groups.values()) for item in sublist]
         output.sort()
         for student in output:
             print(student)
