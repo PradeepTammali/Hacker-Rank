@@ -56,11 +56,12 @@ def membersInTheLargestGroups(n, m, a, b, f, s, t):
                         student_group[i] = mergeGroups[0]
                     groups[mergeGroups[0]] = groups[mergeGroups[0]
                                                     ] | groups[mergeGroups[1]]
-                    for i in range(mergeGroups[1], len(groups)-1):
+                    lenOfGroups = len(groups)
+                    for i in range(mergeGroups[1], lenOfGroups-1):
                         groups[i] = groups[i+1]
                         for student in groups[i+1]:
                             student_group[student] = i
-                    groups.pop(len(groups)-1)
+                    groups.pop(lenOfGroups-1)
         elif studentOneFlag:
             if len(groups[student_group[studentOne]]) < b and checkGradesLimit(groups[student_group[studentOne]] | {studentTwo}):
                 #  add studentTwo to studentOne's group
@@ -74,9 +75,10 @@ def membersInTheLargestGroups(n, m, a, b, f, s, t):
                 groups[student_group[studentTwo]].add(studentOne)
         else:
             # add both the students to a new group
-            student_group[studentOne] = len(groups)
-            student_group[studentTwo] = len(groups)
-            groups[len(groups)] = {studentOne, studentTwo}
+            lenOfGroups = len(groups)
+            student_group[studentOne] = lenOfGroups 
+            student_group[studentTwo] = lenOfGroups
+            groups[lenOfGroups] = {studentOne, studentTwo}
 
     max_len = 0
     output = list()
